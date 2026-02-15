@@ -5,6 +5,11 @@ import { getApplicantsForDomain, markInterviewDone } from "@/actions/co";
 import Tutorial from "@/components/ui/tutorial";
 import HelpButton from "@/components/ui/help-button";
 
+const TUTORIAL_STEPS = [
+    { title: "Interview Applicants", description: "See all applicants. Enter their score (1-10) after the interview and click ✓ to mark it done." },
+    { title: "Search & Filter", description: "Use the search bar to find applicants by name/SRN. Filter by year if needed." }
+];
+
 export default function CORecruitmentsPage() {
     const [applicants, setApplicants] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -13,6 +18,7 @@ export default function CORecruitmentsPage() {
     const [scores, setScores] = useState<Record<string, string>>({});
     const [isPending, startTransition] = useTransition();
     const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
+    const [showTutorial, setShowTutorial] = useState(false);
 
     useEffect(() => {
         loadData();

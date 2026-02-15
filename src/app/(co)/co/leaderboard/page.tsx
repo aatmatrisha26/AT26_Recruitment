@@ -5,6 +5,11 @@ import { getApplicantsForDomain, suggestAcceptReject } from "@/actions/co";
 import Tutorial from "@/components/ui/tutorial";
 import HelpButton from "@/components/ui/help-button";
 
+const TUTORIAL_STEPS = [
+    { title: "Leaderboard", description: "View ranked applicants by interview score. Accept or reject each candidate." },
+    { title: "Accept / Reject", description: "Click the green check to accept or red X to reject. Results update in real time." }
+];
+
 export default function COLeaderboardPage() {
     const [applicants, setApplicants] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -12,6 +17,7 @@ export default function COLeaderboardPage() {
     const [yearFilter, setYearFilter] = useState<number | null>(null);
     const [isPending, startTransition] = useTransition();
     const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
+    const [showTutorial, setShowTutorial] = useState(false);
 
     useEffect(() => { loadData(); }, []);
 
