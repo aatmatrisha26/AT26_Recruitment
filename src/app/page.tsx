@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getSessionFromCookie } from "@/lib/auth";
 import { ProfileDropdown } from "@/components/ui/profile-dropdown";
 import { DOMAINS_DATA } from "@/lib/domains";
-import { HOW_IT_WORKS_STEPS } from "@/lib/steps";
+import HowItWorksSection from "@/components/ui/how-it-works";
 
 export default async function LandingPage() {
   const session = await getSessionFromCookie();
@@ -105,30 +105,7 @@ export default async function LandingPage() {
       </div>
 
       {/* ===== HOW IT WORKS ===== */}
-      <section className="relative z-10 px-6 sm:px-10 py-20 max-w-5xl mx-auto">
-        <div className="text-center mb-14">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-at-orange/30 bg-at-orange/10 mb-5">
-            <span className="font-space text-[11px] tracking-[0.15em] uppercase text-at-orange">5 Simple Steps</span>
-          </div>
-          <h2 className="font-heading text-4xl sm:text-5xl text-white tracking-wider">HOW IT WORKS</h2>
-          <p className="font-inter text-sm text-white/40 mt-3 max-w-md mx-auto">From login to results — here&apos;s everything you need to know.</p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-          {HOW_IT_WORKS_STEPS.map((step, i) => (
-            <div key={i} className="relative group">
-              {i < 4 && (
-                <div className="hidden lg:block absolute top-8 left-[calc(100%+2px)] w-[calc(100%-16px)] h-px bg-white/10 -translate-x-1/2 z-0" />
-              )}
-              <div className="relative bg-white/[0.04] border border-white/10 rounded-xl p-5 hover:bg-white/[0.07] transition-colors duration-200 h-full">
-                <div className="font-heading text-3xl mb-3" style={{ color: step.color, opacity: 0.8 }}>{step.num}</div>
-                <h3 className="font-heading text-lg text-white tracking-wider mb-2">{step.title}</h3>
-                <p className="font-inter text-xs text-white/40 leading-relaxed">{step.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+      <HowItWorksSection />
     </main>
   );
 }

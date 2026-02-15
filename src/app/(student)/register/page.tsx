@@ -3,10 +3,27 @@
 import { useState, useEffect, useTransition } from "react";
 import { DOMAINS_DATA, DOMAIN_TAGLINES } from "@/lib/domains";
 import { applyToDomain, getDomains, getMyApplications } from "@/actions/applications";
+import Tutorial from "@/components/ui/tutorial";
+import HelpButton from "@/components/ui/help-button";
 import { MapPin, CheckCircle, ArrowRight, X } from "lucide-react";
 import Link from "next/link";
 
 const BADGE_COLORS = ['#FF3378', '#F47B58', '#4ECDC4', '#8892b0'];
+
+const TUTORIAL_STEPS = [
+    {
+        title: "Register for Domains",
+        description: "This is your registration page. Click 'Register' next to any domain to apply. You can apply to a maximum of 6 domains."
+    },
+    {
+        title: "Interview at Venue",
+        description: "After registering, head to the listed venue for that domain to give your interview. The coordinators will be there to interview you."
+    },
+    {
+        title: "Track Your Progress",
+        description: "Once applied, click 'Check Status' to see your application status across all domains. You'll be notified once results are published."
+    }
+];
 
 export default function RegisterPage() {
     const [domains, setDomains] = useState<any[]>([]);
@@ -15,6 +32,7 @@ export default function RegisterPage() {
     const [isPending, startTransition] = useTransition();
     const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
     const [toast, setToast] = useState<{ domain: string; visible: boolean } | null>(null);
+    const [showTutorial, setShowTutorial] = useState(false);
 
     useEffect(() => { loadData(); }, []);
 
@@ -200,6 +218,10 @@ export default function RegisterPage() {
                     to { width: 0%; }
                 }
             `}</style>
+
+            {/* Tutorial */}
+            <Tutorial pageKey="register" steps={TUTORIAL_STEPS} forceShow={showTutorial} onClose={() => setShowTutorial(false)} />
+            <HelpButton onClick={() => setShowTutorial(true)} />
         </div>
     );
 }

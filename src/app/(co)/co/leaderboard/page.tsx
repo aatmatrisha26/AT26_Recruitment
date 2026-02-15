@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useTransition } from "react";
 import { getApplicantsForDomain, suggestAcceptReject } from "@/actions/co";
+import Tutorial from "@/components/ui/tutorial";
+import HelpButton from "@/components/ui/help-button";
 
 export default function COLeaderboardPage() {
     const [applicants, setApplicants] = useState<any[]>([]);
@@ -156,6 +158,10 @@ export default function COLeaderboardPage() {
                     <p className="font-space text-sm text-white/30 mt-3 text-right">{sorted.length} interviewed</p>
                 </>
             )}
+
+            {/* Tutorial */}
+            <Tutorial pageKey="co-leaderboard" steps={TUTORIAL_STEPS} forceShow={showTutorial} onClose={() => setShowTutorial(false)} />
+            <HelpButton onClick={() => setShowTutorial(true)} />
         </div>
     );
 }

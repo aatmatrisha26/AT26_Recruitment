@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { getMyApplications } from "@/actions/applications";
+import Tutorial from "@/components/ui/tutorial";
+import HelpButton from "@/components/ui/help-button";
 import Link from "next/link";
 
 const STATUS_MAP: Record<string, { label: string; color: string; bg: string; border: string }> = {
@@ -11,9 +13,25 @@ const STATUS_MAP: Record<string, { label: string; color: string; bg: string; bor
     rejected: { label: "REJECTED", color: "text-red-400", bg: "bg-red-400/15", border: "border-red-400/30" },
 };
 
+const TUTORIAL_STEPS = [
+    {
+        title: "Track Application Status",
+        description: "Here you can see all your applications and their current status. Check back regularly for updates."
+    },
+    {
+        title: "Status Meanings",
+        description: "INTERVIEW LEFT means go give your interview. APPLIED means interview done, awaiting decision. ACCEPTED/REJECTED will show once results are published."
+    },
+    {
+        title: "Join WhatsApp Groups",
+        description: "Once accepted, you'll see a 'Join Group' button to join that domain's WhatsApp group. Don't miss this!"
+    }
+];
+
 export default function StatusPage() {
     const [apps, setApps] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [showTutorial, setShowTutorial] = useState(false);
 
     useEffect(() => { loadApps(); }, []);
 
@@ -115,6 +133,10 @@ export default function StatusPage() {
                     </div>
                 </>
             )}
+
+            {/* Tutorial */}
+            <Tutorial pageKey="status" steps={TUTORIAL_STEPS} forceShow={showTutorial} onClose={() => setShowTutorial(false)} />
+            <HelpButton onClick={() => setShowTutorial(true)} />
         </div>
     );
 }

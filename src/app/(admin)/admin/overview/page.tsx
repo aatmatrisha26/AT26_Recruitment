@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { getOverviewStats } from "@/actions/admin";
+import Tutorial from "@/components/ui/tutorial";
+import HelpButton from "@/components/ui/help-button";
 
 export default function AdminOverviewPage() {
     const [stats, setStats] = useState<any>(null);
@@ -101,6 +103,10 @@ export default function AdminOverviewPage() {
                     <p className="font-inter text-white/50">Failed to load stats. Ensure you&apos;re logged in as SuperAdmin.</p>
                 </div>
             )}
+
+            {/* Tutorial */}
+            <Tutorial pageKey="admin-overview" steps={TUTORIAL_STEPS} forceShow={showTutorial} onClose={() => setShowTutorial(false)} />
+            <HelpButton onClick={() => setShowTutorial(true)} />
         </div>
     );
 }

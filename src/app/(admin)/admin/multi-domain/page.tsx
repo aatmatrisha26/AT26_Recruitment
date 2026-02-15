@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { getMultiDomainStudents } from "@/actions/admin";
+import Tutorial from "@/components/ui/tutorial";
+import HelpButton from "@/components/ui/help-button";
 
 export default function MultiDomainPage() {
     const [students, setStudents] = useState<any[]>([]);
@@ -76,6 +78,10 @@ export default function MultiDomainPage() {
                     </div>
                 </>
             )}
+
+            {/* Tutorial */}
+            <Tutorial pageKey="admin-multi-domain" steps={TUTORIAL_STEPS} forceShow={showTutorial} onClose={() => setShowTutorial(false)} />
+            <HelpButton onClick={() => setShowTutorial(true)} />
         </div>
     );
 }

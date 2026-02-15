@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useTransition } from "react";
 import { getApplicantsForDomain, markInterviewDone } from "@/actions/co";
+import Tutorial from "@/components/ui/tutorial";
+import HelpButton from "@/components/ui/help-button";
 
 export default function CORecruitmentsPage() {
     const [applicants, setApplicants] = useState<any[]>([]);
@@ -160,6 +162,10 @@ export default function CORecruitmentsPage() {
                     <p className="font-space text-sm text-white/30 mt-3 text-right">{filtered.length} pending</p>
                 </>
             )}
+
+            {/* Tutorial */}
+            <Tutorial pageKey="co-recruitments" steps={TUTORIAL_STEPS} forceShow={showTutorial} onClose={() => setShowTutorial(false)} />
+            <HelpButton onClick={() => setShowTutorial(true)} />
         </div>
     );
 }

@@ -3,6 +3,8 @@
 import { useState, useEffect, useTransition } from "react";
 import { freezeResults, unfreezeResults, publishResults, updateWhatsAppLink, exportCSV } from "@/actions/admin";
 import { getDomains, getSystemSettings } from "@/actions/applications";
+import Tutorial from "@/components/ui/tutorial";
+import HelpButton from "@/components/ui/help-button";
 
 export default function AdminUploadPage() {
     const [domains, setDomains] = useState<any[]>([]);
@@ -159,6 +161,8 @@ export default function AdminUploadPage() {
                     ))}
                 </div>
             </div>
-        </div>
+            {/* Tutorial */}
+            <Tutorial pageKey="admin-upload" steps={TUTORIAL_STEPS} forceShow={showTutorial} onClose={() => setShowTutorial(false)} />
+            <HelpButton onClick={() => setShowTutorial(true)} />        </div>
     );
 }

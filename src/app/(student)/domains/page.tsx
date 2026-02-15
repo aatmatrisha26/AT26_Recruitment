@@ -4,6 +4,8 @@ import { useState } from "react";
 import { DOMAINS_DATA } from "@/lib/domains";
 import { HOW_IT_WORKS_STEPS } from "@/lib/steps";
 import { ReviewCardModal } from "@/components/ui/review-card";
+import Tutorial from "@/components/ui/tutorial";
+import HelpButton from "@/components/ui/help-button";
 import { useRouter } from "next/navigation";
 import { MapPin, ArrowRight } from "lucide-react";
 
@@ -33,8 +35,24 @@ const DOMAIN_CORES: Record<string, { coreName: string; coreTitle: string }> = {
     fyi: { coreName: "X", coreTitle: "FYI Core" },
 };
 
+const TUTORIAL_STEPS = [
+    {
+        title: "Welcome to AT26!",
+        description: "This is where you explore all 14 domains. Each domain has unique roles and responsibilities. Click on any card to learn more about what they do."
+    },
+    {
+        title: "Find Your Match",
+        description: "Look through the domains. Check their venues, descriptions, and what they do. You can apply to up to 6 domains, so choose wisely!"
+    },
+    {
+        title: "Ready to Register?",
+        description: "Once you've explored, click 'Register Now' to apply. You'll be able to select your preferred domains and submit your applications."
+    }
+];
+
 export default function DomainsPage() {
     const [selectedDomain, setSelectedDomain] = useState<(typeof DOMAINS_DATA)[number] | null>(null);
+    const [showTutorial, setShowTutorial] = useState(false);
     const router = useRouter();
 
     return (
@@ -121,16 +139,60 @@ export default function DomainsPage() {
                     <p className="font-inter text-sm text-white/40 mt-2">From login to results — the full process.</p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                {/* Desktop Flow */}
+                <div className="hidden lg:grid grid-cols-5 gap-3 relative">
                     {HOW_IT_WORKS_STEPS.map((step, i) => (
-                        <div key={i} className="relative bg-white/[0.04] border border-white/10 rounded-xl p-4 hover:bg-white/[0.07] transition-colors duration-200">
-                            <div className="font-heading text-2xl mb-2" style={{ color: step.color, opacity: 0.8 }}>{step.num}</div>
-                            <h3 className="font-heading text-base text-white tracking-wider mb-1.5">{step.title}</h3>
-                            <p className="font-inter text-[11px] text-white/40 leading-relaxed">{step.desc}</p>
+                        <div key={i} className="relative group">
+                            {/* Arrow Connector */}
+                            {i < 4 && (
+                                <div className="absolute top-[55px] left-[calc(50%+40px)] w-[calc(100%-20px)] flex items-center justify-center pointer-events-none z-10">
+                                    <svg className="w-8 h-4 animate-pulse-slow" style={{ color: step.color, opacity: 0.5 }} fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                                    </svg>
+                                </div>
+                            )}
+                            <div className="relative bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/10 rounded-xl p-4 hover:border-white/20 hover:-translate-y-1 transition-all duration-200 h-full">
+                                <div className="w-10 h-10 rounded-lg mb-2 flex items-center justify-center group-hover:scale-110 transition-transform"
+                                    style={{ background: `${step.color}20`, border: `1px solid ${step.color}30` }}>
+                                    <div className="font-heading text-lg" style={{ color: step.color }}>{step.num}</div>
+                                </div>
+                                <h3 className="font-heading text-sm text-white tracking-wider mb-1.5 uppercase">{step.title}</h3>
+                                <p className="font-inter text-[11px] text-white/40 leading-relaxed">{step.desc}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Mobile/Tablet Timeline */}
+                <div className="lg:hidden space-y-4">
+                    {HOW_IT_WORKS_STEPS.map((step, i) => (
+                        <div key={i} className="relative flex gap-3 items-start">
+                            {i < 4 && (
+                                <div className="absolute top-12 left-5 w-0.5 h-[calc(100%+4px)]"
+                                    style={{ background: `linear-gradient(to bottom, ${step.color}30, ${HOW_IT_WORKS_STEPS[i + 1].color}30)` }} />
+                            )}
+                            <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center z-10"
+                                style={{ background: `${step.color}20`, border: `1px solid ${step.color}30` }}>
+                                <span className="font-heading text-base" style={{ color: step.color }}>{step.num}</span>
+                            </div>
+                            <div className="flex-1 bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/10 rounded-xl p-3.5">
+                                <h3 className="font-heading text-sm text-white tracking-wider mb-1 uppercase">{step.title}</h3>
+                                <p className="font-inter text-[11px] text-white/40 leading-relaxed">{step.desc}</p>
+                            </div>
                         </div>
                     ))}
                 </div>
             </div>
+
+            <style jsx>{`
+                @keyframes pulse-slow {
+                    0%, 100% { opacity: 0.3; transform: scale(1); }
+                    50% { opacity: 0.7; transform: scale(1.1); }
+                }
+                .animate-pulse-slow {
+                    animation: pulse-slow 2s ease-in-out infinite;
+                }
+            `}</style>
 
             {/* Know More Modal */}
             {selectedDomain && (() => {
@@ -146,6 +208,10 @@ export default function DomainsPage() {
                     />
                 );
             })()}
+
+            {/* Tutorial */}
+            <Tutorial pageKey="domains" steps={TUTORIAL_STEPS} forceShow={showTutorial} onClose={() => setShowTutorial(false)} />
+            <HelpButton onClick={() => setShowTutorial(true)} />
         </div>
     );
 }
