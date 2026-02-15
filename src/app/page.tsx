@@ -61,10 +61,27 @@ export default async function LandingPage() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up-d3">
             <Link
-              href={session ? "/domains" : "/api/auth/pesu"}
+              href={
+                session 
+                  ? (session.role === 'superadmin' 
+                      ? "/admin/overview" 
+                      : session.role.startsWith('CO_') 
+                        ? "/co" 
+                        : "/domains"
+                    )
+                  : "/api/auth/pesu"
+              }
               className="font-heading tracking-wider text-lg px-10 py-4 bg-at-pink text-white hover:bg-at-orange transition-all duration-200 inline-flex items-center gap-3 rounded-lg shadow-[0_0_30px_rgba(255,51,120,0.3)] hover:shadow-[0_0_40px_rgba(244,123,88,0.4)]"
             >
-              {session ? "Go to Dashboard" : "Join Recruitments"}
+              {session 
+                ? (session.role === 'superadmin' 
+                    ? "Go to Admin Panel" 
+                    : session.role.startsWith('CO_') 
+                      ? "Go to CO Dashboard" 
+                      : "Go to Dashboard"
+                  )
+                : "Join Recruitments"
+              }
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>

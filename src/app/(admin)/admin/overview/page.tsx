@@ -5,9 +5,25 @@ import { getOverviewStats } from "@/actions/admin";
 import Tutorial from "@/components/ui/tutorial";
 import HelpButton from "@/components/ui/help-button";
 
+const TUTORIAL_STEPS = [
+    {
+        title: "System Overview",
+        description: "Welcome to the admin panel! This page shows you high-level statistics across all domains including total registered students, applications, and acceptances."
+    },
+    {
+        title: "Domain Breakdown",
+        description: "Scroll down to see detailed stats for each domain. You can view how many students applied, how many were accepted, rejected, or are still pending review."
+    },
+    {
+        title: "Navigation",
+        description: "Use the sidebar to navigate to other admin features: upload results, manage multiple domains, or view detailed analytics."
+    }
+];
+
 export default function AdminOverviewPage() {
     const [stats, setStats] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const [showTutorial, setShowTutorial] = useState(false);
 
     useEffect(() => { loadStats(); }, []);
 
