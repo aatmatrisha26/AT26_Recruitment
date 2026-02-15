@@ -8,7 +8,7 @@ import Link from "next/link";
 import { CheckCircle, XCircle, Clock, ArrowRight } from "lucide-react";
 
 const STATUS_MAP: Record<string, { label: string; color: string; glow: string; icon: typeof Clock }> = {
-    applied: { label: "INTERVIEW LEFT", color: "#FF9E64", glow: "rgba(255,158,100,0.1)", icon: Clock },
+    applied: { label: "APPLIED", color: "#FF9E64", glow: "rgba(255,158,100,0.1)", icon: Clock },
     interview_left: { label: "INTERVIEW LEFT", color: "#00F0FF", glow: "rgba(0,240,255,0.1)", icon: Clock },
     accepted: { label: "ACCEPTED", color: "#4ADE80", glow: "rgba(74,222,128,0.1)", icon: CheckCircle },
     rejected: { label: "REJECTED", color: "#FF4444", glow: "rgba(255,68,68,0.1)", icon: XCircle },

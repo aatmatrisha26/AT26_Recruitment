@@ -17,6 +17,8 @@ interface SidebarContextProps {
     open: boolean;
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     animate: boolean;
+    mobileOpen: boolean;
+    setMobileOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const SidebarContext = createContext<SidebarContextProps | undefined>(undefined);
@@ -33,9 +35,16 @@ export const SidebarProvider = ({
     children: React.ReactNode; open?: boolean; setOpen?: React.Dispatch<React.SetStateAction<boolean>>; animate?: boolean;
 }) => {
     const [openState, setOpenState] = useState(false);
+    const [mobileOpenState, setMobileOpenState] = useState(false);
+
     const open = openProp !== undefined ? openProp : openState;
     const setOpen = setOpenProp !== undefined ? setOpenProp : setOpenState;
-    return <SidebarContext.Provider value={{ open, setOpen, animate }}>{children}</SidebarContext.Provider>;
+
+    // We can expose mobileOpen as a controlled prop too if needed, but for now local state in provider is enough
+    const mobileOpen = mobileOpenState;
+    const setMobileOpen = setMobileOpenState;
+
+    return <SidebarContext.Provider value={{ open, setOpen, animate, mobileOpen, setMobileOpen }}>{children}</SidebarContext.Provider>;
 };
 
 export const Sidebar = ({ children, open, setOpen, animate }: {
@@ -61,7 +70,7 @@ export const DesktopSidebar = ({ className, children, ...props }: React.Componen
 };
 
 export const MobileSidebar = ({ className, children, ...props }: React.ComponentProps<"div">) => {
-    const [mobileOpen, setMobileOpen] = useState(false);
+    const { mobileOpen, setMobileOpen } = useSidebar();
     return (
         <>
             <div className="h-14 px-4 flex md:hidden items-center justify-between bg-at-dark w-full border-b border-white/10" {...props}>
@@ -103,9 +112,11 @@ export const MobileSidebar = ({ className, children, ...props }: React.Component
 export const SidebarLink = ({ link, className, active, ...props }: {
     link: Links; className?: string; active?: boolean; props?: LinkProps;
 }) => {
+    const { setMobileOpen } = useSidebar();
     return (
         <Link
             href={link.href}
+            onClick={() => setMobileOpen(false)}
             className={cn(
                 "flex items-center justify-start gap-3 py-3 px-3 rounded-lg transition-all font-inter text-sm",
                 active ? "bg-at-pink text-white font-semibold" : "text-white/50 hover:text-white hover:bg-white/5",
