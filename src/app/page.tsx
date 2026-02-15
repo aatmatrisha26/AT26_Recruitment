@@ -130,13 +130,13 @@ export default async function LandingPage() {
       <HowItWorksSection />
 
       {/* ===== FOOTER ===== */}
-      <footer className="relative z-10 mt-8 sm:mt-12">
-        <div className="h-px w-full" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,32,110,0.2), rgba(0,240,255,0.15), transparent)' }} />
-        <div className="px-6 sm:px-10 py-6 sm:py-8 text-center">
-          <p className="font-retro text-[8px] sm:text-[9px] tracking-[0.2em] uppercase text-at-text/20 mb-1.5">
-            Created by <span className="text-at-pink/50">Dennis</span> & <span className="text-at-cyan/50">Ashmith</span>
+      <footer className="relative z-10 mt-8 sm:mt-12 px-6 sm:px-10 pb-8 sm:pb-10">
+        <div className="h-px w-full mb-6 sm:mb-8" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,32,110,0.2), rgba(0,240,255,0.15), transparent)' }} />
+        <div className="glass-card rounded-xl sm:rounded-2xl neon-border-pink max-w-md mx-auto px-6 py-5 sm:px-8 sm:py-6 text-center" style={{ boxShadow: '0 0 30px rgba(255,32,110,0.05)' }}>
+          <p className="font-retro text-[9px] sm:text-[11px] tracking-[0.15em] uppercase text-at-text/40 mb-2">
+            Created by <span className="text-at-pink">Dennis</span> & <span className="text-at-cyan">Ashmith</span>
           </p>
-          <p className="font-retro text-[7px] sm:text-[8px] tracking-[0.15em] uppercase text-at-text/12">
+          <p className="font-retro text-[7px] sm:text-[9px] tracking-[0.12em] uppercase text-at-text/20">
             AT&apos;26 Tech Heads · All rights reserved
           </p>
         </div>
