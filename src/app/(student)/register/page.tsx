@@ -2,8 +2,10 @@
 
 import { useState, useEffect, useTransition } from "react";
 import { DOMAINS_DATA, DOMAIN_TAGLINES } from "@/lib/domains";
-import { applyToDomain, getDomains, getMyApplications } from "@/actions/applications";
+import { applyToDomain, getDomains, getMyApplications, withdrawApplication } from "@/actions/applications";
+import { useRouter } from "next/navigation";
 import Tutorial from "@/components/ui/tutorial";
+import { ConfirmationModal } from "@/components/ui/confirmation-modal";
 import HelpButton from "@/components/ui/help-button";
 import { MapPin, CheckCircle, ArrowRight, X } from "lucide-react";
 import Link from "next/link";
@@ -24,19 +26,45 @@ export default function RegisterPage() {
     const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
     const [toast, setToast] = useState<{ domain: string; visible: boolean } | null>(null);
     const [showTutorial, setShowTutorial] = useState(false);
+    const router = useRouter(); // Added for useRouter
+
+    // Modal state
+    const [showWithdraw, setShowWithdraw] = useState(false);
+    const [selectedWithdraw, setSelectedWithdraw] = useState<{ id: string, name: string } | null>(null);
 
     useEffect(() => { loadData(); }, []);
 
     async function loadData() {
         try {
             const [d, a] = await Promise.all([getDomains(), getMyApplications()]);
-            setDomains(d.length > 0 ? d : DOMAINS_DATA.map((x, i) => ({ id: `local-${i}`, ...x })));
+
+            // Sort domains based on DOMAINS_DATA order
+            if (d.length > 0) {
+                const orderMap = new Map(DOMAINS_DATA.map((item, index) => [item.slug, index]));
+                d.sort((a, b) => {
+                    const indexA = orderMap.get(a.slug) ?? 999;
+                    const indexB = orderMap.get(b.slug) ?? 999;
+                    return indexA - indexB;
+                });
+                setDomains(d);
+            } else {
+                setDomains(DOMAINS_DATA.map((x, i) => ({ id: `local-${i}`, ...x })));
+            }
+
             setMyApps(a.data || []);
-        } catch { setDomains(DOMAINS_DATA.map((x, i) => ({ id: `local-${i}`, ...x }))); }
-        finally { setLoading(false); }
+        } catch {
+            setDomains(DOMAINS_DATA.map((x, i) => ({ id: `local-${i}`, ...x })));
+        } finally {
+            setLoading(false);
+        }
     }
 
     function handleApply(domainId: string, domainName: string) {
+        if (myApps.length >= 6) {
+            setMessage({ text: "You can apply to a maximum of 6 domains only!", type: "error" });
+            setTimeout(() => setMessage(null), 3000);
+            return;
+        }
         startTransition(async () => {
             const r = await applyToDomain(domainId);
             if (r.error) {
@@ -48,6 +76,25 @@ export default function RegisterPage() {
                 setTimeout(() => setToast(null), 4500);
                 loadData();
             }
+        });
+    }
+
+    function initiateWithdraw(domainId: string, domainName: string) {
+        setSelectedWithdraw({ id: domainId, name: domainName });
+        setShowWithdraw(true);
+    }
+
+    function executeWithdraw() {
+        if (!selectedWithdraw) return;
+        startTransition(async () => {
+            const r = await withdrawApplication(selectedWithdraw.id);
+            if (r.error) {
+                setMessage({ text: r.error, type: "error" });
+            } else {
+                setMessage({ text: `Un-applied from ${selectedWithdraw.name}`, type: "success" });
+                loadData();
+            }
+            setTimeout(() => setMessage(null), 3000);
         });
     }
 
@@ -131,9 +178,15 @@ export default function RegisterPage() {
                                             </div>
                                         </div>
                                         {isApplied(d.id) ? (
-                                            <span className="retro-badge text-[8px] bg-at-cyan/10 text-at-cyan border border-at-cyan/20 inline-flex items-center gap-1">
-                                                <CheckCircle className="w-2.5 h-2.5" /> APPLIED
-                                            </span>
+                                            <div className="flex items-center gap-2">
+                                                <span className="retro-badge text-[8px] bg-at-cyan/10 text-at-cyan border border-at-cyan/20 inline-flex items-center gap-1">
+                                                    <CheckCircle className="w-2.5 h-2.5" /> APPLIED
+                                                </span>
+                                                <button onClick={() => initiateWithdraw(d.id, d.name)} disabled={isPending}
+                                                    className="w-5 h-5 flex items-center justify-center rounded bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 transition" title="Un-apply">
+                                                    <X className="w-3 h-3" />
+                                                </button>
+                                            </div>
                                         ) : (
                                             <button onClick={() => handleApply(d.id, d.name)} disabled={isPending || myApps.length >= 6}
                                                 className="btn-retro text-[9px] px-3 py-1.5 bg-at-pink/10 text-at-pink rounded-lg disabled:opacity-30">
@@ -185,9 +238,15 @@ export default function RegisterPage() {
                                             </td>
                                             <td className="text-right">
                                                 {isApplied(d.id) ? (
-                                                    <span className="retro-badge text-[9px] bg-at-cyan/10 text-at-cyan border border-at-cyan/20 inline-flex items-center gap-1">
-                                                        <CheckCircle className="w-3 h-3" /> APPLIED
-                                                    </span>
+                                                    <div className="flex items-center justify-end gap-3">
+                                                        <span className="retro-badge text-[9px] bg-at-cyan/10 text-at-cyan border border-at-cyan/20 inline-flex items-center gap-1">
+                                                            <CheckCircle className="w-3 h-3" /> APPLIED
+                                                        </span>
+                                                        <button onClick={() => initiateWithdraw(d.id, d.name)} disabled={isPending}
+                                                            className="w-6 h-6 flex items-center justify-center rounded bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 transition" title="Un-apply">
+                                                            <X className="w-3.5 h-3.5" />
+                                                        </button>
+                                                    </div>
                                                 ) : (
                                                     <button onClick={() => handleApply(d.id, d.name)} disabled={isPending || myApps.length >= 6}
                                                         className="btn-retro text-[9px] px-4 py-1.5 bg-at-pink/10 text-at-pink rounded-lg disabled:opacity-30">
@@ -210,6 +269,16 @@ export default function RegisterPage() {
 
             <Tutorial pageKey="register" steps={TUTORIAL_STEPS} forceShow={showTutorial} onClose={() => setShowTutorial(false)} />
             <HelpButton onClick={() => setShowTutorial(true)} />
+
+            <ConfirmationModal
+                open={showWithdraw}
+                onClose={() => setShowWithdraw(false)}
+                onConfirm={executeWithdraw}
+                title="Withdraw Application"
+                description={`Are you sure you want to withdraw your application for ${selectedWithdraw?.name}? This action cannot be undone.`}
+                confirmText="Withdraw"
+                variant="danger"
+            />
         </div>
     );
 }

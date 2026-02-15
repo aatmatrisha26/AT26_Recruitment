@@ -79,12 +79,12 @@ export default function DomainsPage() {
                             key={domain.slug}
                             className="group glass-card relative rounded-xl sm:rounded-2xl overflow-hidden cursor-pointer"
                             onClick={() => setSelectedDomain(domain)}
-                            style={{ borderColor: `${neonColor}15`, background: `radial-gradient(ellipse at 0% 100%, ${neonColor}18 0%, transparent 55%), radial-gradient(ellipse at 100% 0%, ${neonColor}0D 0%, transparent 55%), rgba(255,255,255,0.02)` }}
+                            style={{ borderColor: `${neonColor}15`, background: `radial-gradient(ellipse at 0% 100%, rgba(255,32,110,0.15) 0%, transparent 55%), radial-gradient(ellipse at 100% 0%, ${neonColor}10 0%, transparent 55%), rgba(255,255,255,0.02)` }}
                         >
                             {/* Icon badge */}
-                            <div className="absolute top-3 right-4 sm:top-4 sm:right-5 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
-                                style={{ background: `${neonColor}08`, border: `1px solid ${neonColor}15` }}>
-                                <span className="text-sm sm:text-base group-hover:scale-110 transition-transform" style={{ color: `${neonColor}90` }}>{domain.icon}</span>
+                            <div className="absolute top-3 right-4 sm:top-4 sm:right-5 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg"
+                                style={{ background: `linear-gradient(135deg, ${neonColor}, ${index % 2 === 0 ? '#FF3378' : '#00F0FF'})` }}>
+                                <span className="text-sm sm:text-base font-bold text-white drop-shadow-md">{domain.icon}</span>
                             </div>
 
                             {/* Glow line on hover */}

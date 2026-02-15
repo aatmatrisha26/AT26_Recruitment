@@ -78,7 +78,7 @@ export default function StatusPage() {
                                             <span className="text-base">{d?.icon || "📋"}</span>
                                             <h3 className="font-heading text-sm text-white tracking-tight truncate">{d?.name || "Unknown"}</h3>
                                         </div>
-                                        <span className="retro-badge text-[8px] inline-flex items-center gap-1 shrink-0"
+                                        <span className="retro-badge text-[8px] inline-flex items-center gap-2 shrink-0"
                                             style={{ background: `${s.color}10`, color: s.color, border: `1px solid ${s.color}20` }}>
                                             <StatusIcon className="w-2.5 h-2.5" />
                                             {s.label}
@@ -122,7 +122,7 @@ export default function StatusPage() {
                                             </td>
                                             <td className="font-inter text-xs text-white/30">{d?.venue || "TBD"}</td>
                                             <td>
-                                                <span className="retro-badge text-[9px] inline-flex items-center gap-1"
+                                                <span className="retro-badge text-[9px] inline-flex items-center gap-2"
                                                     style={{ background: `${s.color}10`, color: s.color, border: `1px solid ${s.color}20` }}>
                                                     <StatusIcon className="w-3 h-3" />
                                                     {s.label}

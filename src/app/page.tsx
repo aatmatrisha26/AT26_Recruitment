@@ -45,21 +45,21 @@ export default async function LandingPage() {
           </div>
 
           {/* Main heading — responsive text that never overflows */}
-          <h1 className="font-heading leading-[0.9] text-at-text mb-1 animate-fade-in-up-d1"
+          <h1 className="font-heading leading-[0.9] text-at-text mb-1 animate-fade-in-up-d1 font-black tracking-tighter"
             style={{ fontSize: 'clamp(2rem, 6vw, 4.5rem)' }}>
             JOIN THE
           </h1>
-          <h1 className="font-heading leading-[0.9] mb-5 sm:mb-6 animate-fade-in-up-d2"
+          <h1 className="font-heading leading-[0.9] mb-5 sm:mb-6 animate-fade-in-up-d2 font-black tracking-tighter"
             style={{ fontSize: 'clamp(2.5rem, 7vw, 5.5rem)' }}>
             <span className="text-glow-pink text-gradient-heat">HEATWAVE</span>
           </h1>
 
           {/* Accent line */}
           <div className="animate-fade-in-up-d2 mb-6 sm:mb-8">
-            <span className="font-inter text-at-peach/40 text-[10px] sm:text-xs tracking-[0.2em] uppercase font-medium">est. 2026 · heatwave edition</span>
+            <span className="font-inter text-at-peach/60 text-[10px] sm:text-xs tracking-[0.2em] uppercase font-medium">est. 2026 · heatwave edition</span>
           </div>
 
-          <p className="font-inter text-xs sm:text-sm md:text-base text-at-text/40 leading-relaxed mb-8 sm:mb-10 max-w-md mx-auto animate-fade-in-up-d2 px-4 sm:px-0">
+          <p className="font-inter text-xs sm:text-sm md:text-base text-at-text/60 leading-relaxed mb-8 sm:mb-10 max-w-md mx-auto animate-fade-in-up-d2 px-4 sm:px-0">
             Pick your domain, show up for the interview, and become part of something legendary.
           </p>
 
@@ -76,7 +76,7 @@ export default async function LandingPage() {
                   )
                   : "/api/auth/pesu"
               }
-              className="btn-pill btn-pill-primary text-sm sm:text-base lg:text-lg px-8 sm:px-10 py-3 sm:py-4 inline-flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-center"
+              className="btn-pill btn-pill-primary text-sm sm:text-base lg:text-lg px-8 sm:px-10 py-3 sm:py-4 inline-flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-center font-bold tracking-wide"
             >
               {session
                 ? (session.role === 'superadmin'
@@ -87,7 +87,7 @@ export default async function LandingPage() {
                 )
                 : "Join Recruitments"
               }
-              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </Link>
@@ -97,17 +97,17 @@ export default async function LandingPage() {
           <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 mt-10 sm:mt-14 animate-fade-in-up-d4">
             <div className="text-center">
               <p className="font-heading text-2xl sm:text-3xl text-at-text">14</p>
-              <p className="font-retro text-[8px] sm:text-[10px] text-at-text/20 uppercase tracking-widest">Domains</p>
+              <p className="font-retro text-[8px] sm:text-[10px] text-at-text/60 uppercase tracking-widest font-semibold">Domains</p>
             </div>
-            <div className="w-px h-6 sm:h-8 bg-white/8" />
+            <div className="w-px h-6 sm:h-8 bg-white/20" />
             <div className="text-center">
               <p className="font-heading text-2xl sm:text-3xl text-at-pink">6 Max</p>
-              <p className="font-retro text-[8px] sm:text-[10px] text-at-text/20 uppercase tracking-widest">Applications</p>
+              <p className="font-retro text-[8px] sm:text-[10px] text-at-text/60 uppercase tracking-widest font-semibold">Applications</p>
             </div>
-            <div className="w-px h-6 sm:h-8 bg-white/8" />
+            <div className="w-px h-6 sm:h-8 bg-white/20" />
             <div className="text-center">
               <p className="font-heading text-2xl sm:text-3xl text-at-peach">2026</p>
-              <p className="font-retro text-[8px] sm:text-[10px] text-at-text/20 uppercase tracking-widest">Edition</p>
+              <p className="font-retro text-[8px] sm:text-[10px] text-at-text/60 uppercase tracking-widest font-semibold">Edition</p>
             </div>
           </div>
         </div>
@@ -118,7 +118,7 @@ export default async function LandingPage() {
         <div className="overflow-hidden py-3 sm:py-4">
           <div className="animate-marquee whitespace-nowrap flex">
             {[1, 2, 3].map((i) => (
-              <span key={i} className="font-retro text-[10px] sm:text-xs tracking-[0.15em] text-at-text/10 mx-4 sm:mx-6">
+              <span key={i} className="font-retro text-[10px] sm:text-xs tracking-[0.15em] text-at-text/70 mx-4 sm:mx-6 font-semibold">
                 AATMATRISHA 2026 &bull; HEATWAVE &bull; {allDomains} &bull; APPLY NOW &bull;&nbsp;
               </span>
             ))}
@@ -133,10 +133,10 @@ export default async function LandingPage() {
       <footer className="relative z-10 mt-8 sm:mt-12 px-6 sm:px-10 pb-8 sm:pb-10">
         <div className="h-px w-full mb-6 sm:mb-8" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,32,110,0.2), rgba(0,240,255,0.15), transparent)' }} />
         <div className="glass-card rounded-xl sm:rounded-2xl neon-border-pink max-w-md mx-auto px-6 py-5 sm:px-8 sm:py-6 text-center" style={{ boxShadow: '0 0 30px rgba(255,32,110,0.05)' }}>
-          <p className="font-retro text-[9px] sm:text-[11px] tracking-[0.15em] uppercase text-at-text/40 mb-2">
-            Created by <span className="text-at-pink">Dennis</span> & <span className="text-at-cyan">Ashmith</span>
+          <p className="font-retro text-[9px] sm:text-[11px] tracking-[0.15em] uppercase text-at-text/60 mb-2 font-medium">
+            Created by <span className="text-at-cyan">Dennis</span> & <span className="text-at-cyan">Ashmith</span>
           </p>
-          <p className="font-retro text-[7px] sm:text-[9px] tracking-[0.12em] uppercase text-at-text/20">
+          <p className="font-retro text-[7px] sm:text-[9px] tracking-[0.12em] uppercase text-at-text/40">
             AT&apos;26 Tech Heads · All rights reserved
           </p>
         </div>

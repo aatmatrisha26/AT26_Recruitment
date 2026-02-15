@@ -5,6 +5,7 @@ import Link, { LinkProps } from "next/link";
 import React, { useState, createContext, useContext } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import Image from "next/image";
 
 interface Links {
     label: string;
@@ -64,7 +65,18 @@ export const MobileSidebar = ({ className, children, ...props }: React.Component
     return (
         <>
             <div className="h-14 px-4 flex md:hidden items-center justify-between bg-at-dark w-full border-b border-white/10" {...props}>
-                <div className="flex justify-end z-20 w-full">
+                <div className="flex items-center gap-3 z-20">
+                    <div className="relative w-8 h-8 rounded-full overflow-hidden shadow-lg shadow-at-pink/20">
+                        <Image
+                            src="/AT26_logo.png"
+                            alt="AT26"
+                            fill
+                            className="object-cover"
+                        />
+                    </div>
+                    <span className="font-heading font-bold text-white text-lg tracking-wider">AATMATRISHA</span>
+                </div>
+                <div className="flex justify-end z-20">
                     <Menu className="text-white cursor-pointer" onClick={() => setMobileOpen(true)} />
                 </div>
                 <AnimatePresence>

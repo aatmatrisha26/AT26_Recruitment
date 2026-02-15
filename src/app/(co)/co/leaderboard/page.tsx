@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useTransition } from "react";
 import { getApplicantsForDomain, suggestAcceptReject } from "@/actions/co";
+import { getSystemSettings } from "@/actions/applications";
 import Tutorial from "@/components/ui/tutorial";
 import HelpButton from "@/components/ui/help-button";
 
@@ -18,12 +19,14 @@ export default function COLeaderboardPage() {
     const [isPending, startTransition] = useTransition();
     const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
     const [showTutorial, setShowTutorial] = useState(false);
+    const [settings, setSettings] = useState<any>(null);
 
     useEffect(() => { loadData(); }, []);
 
     async function loadData() {
-        const r = await getApplicantsForDomain();
+        const [r, s] = await Promise.all([getApplicantsForDomain(), getSystemSettings()]);
         if (r.data) setApplicants(r.data);
+        setSettings(s);
         setLoading(false);
     }
 
@@ -100,18 +103,28 @@ export default function COLeaderboardPage() {
                                         </div>
                                     </div>
                                     <div className="flex gap-2 mt-3">
-                                        {app.status === "accepted" ? (
-                                            <span className="font-inter text-sm font-semibold text-green-400 bg-green-400/15 border border-green-400/30 px-4 py-2.5 rounded-lg uppercase flex-1 text-center">Accepted ✓</span>
-                                        ) : app.status === "rejected" ? (
-                                            <span className="font-inter text-sm font-semibold text-red-400 bg-red-400/15 border border-red-400/30 px-4 py-2.5 rounded-lg uppercase flex-1 text-center">Rejected</span>
-                                        ) : (
-                                            <>
-                                                <button onClick={() => handleAction(app.id, "accepted")} disabled={isPending}
-                                                    className="flex-1 font-heading text-sm py-2.5 bg-at-teal text-at-dark uppercase tracking-wider rounded-lg hover:opacity-90 transition disabled:opacity-40">Accept</button>
-                                                <button onClick={() => handleAction(app.id, "rejected")} disabled={isPending}
-                                                    className="flex-1 font-heading text-sm py-2.5 bg-red-500/20 text-red-400 border border-red-500/30 uppercase tracking-wider rounded-lg hover:bg-red-500/30 transition disabled:opacity-40">Reject</button>
-                                            </>
-                                        )}
+                                        <div className="flex gap-2 mt-3">
+                                            {settings?.frozen ? (
+                                                app.status === "accepted" ? (
+                                                    <span className="font-inter text-sm font-semibold text-green-400 bg-green-400/15 border border-green-400/30 px-4 py-2.5 rounded-lg uppercase flex-1 text-center">Accepted ✓</span>
+                                                ) : app.status === "rejected" ? (
+                                                    <span className="font-inter text-sm font-semibold text-red-400 bg-red-400/15 border border-red-400/30 px-4 py-2.5 rounded-lg uppercase flex-1 text-center">Rejected</span>
+                                                ) : (
+                                                    <span className="font-inter text-sm text-white/30 italic flex-1 text-center py-2.5">No decision</span>
+                                                )
+                                            ) : (
+                                                <>
+                                                    <button onClick={() => handleAction(app.id, "accepted")} disabled={isPending}
+                                                        className={`flex-1 font-heading text-sm py-2.5 uppercase tracking-wider rounded-lg transition disabled:opacity-40 ${app.status === 'accepted' ? 'bg-green-500 text-white shadow-[0_0_15px_rgba(34,197,94,0.4)]' : 'bg-at-teal text-at-dark hover:opacity-90'}`}>
+                                                        Accept
+                                                    </button>
+                                                    <button onClick={() => handleAction(app.id, "rejected")} disabled={isPending}
+                                                        className={`flex-1 font-heading text-sm py-2.5 uppercase tracking-wider rounded-lg transition disabled:opacity-40 border ${app.status === 'rejected' ? 'bg-red-500 text-white border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.4)]' : 'bg-red-500/10 text-red-400 border-red-500/30 hover:bg-red-500/20'}`}>
+                                                        Reject
+                                                    </button>
+                                                </>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             );
@@ -142,16 +155,24 @@ export default function COLeaderboardPage() {
                                             <td className="px-5 py-4 text-center font-space text-sm text-white/50">{u?.year}</td>
                                             <td className="px-5 py-4 text-center font-heading text-xl text-at-pink">{app.score || "—"}</td>
                                             <td className="px-5 py-4 text-center">
-                                                {app.status === "accepted" ? (
-                                                    <span className="font-inter text-xs font-semibold text-green-400 bg-green-400/15 border border-green-400/30 px-4 py-2 rounded-full uppercase">Accepted</span>
-                                                ) : app.status === "rejected" ? (
-                                                    <span className="font-inter text-xs font-semibold text-red-400 bg-red-400/15 border border-red-400/30 px-4 py-2 rounded-full uppercase">Rejected</span>
+                                                {settings?.frozen ? (
+                                                    app.status === "accepted" ? (
+                                                        <span className="font-inter text-xs font-semibold text-green-400 bg-green-400/15 border border-green-400/30 px-4 py-2 rounded-full uppercase">Accepted</span>
+                                                    ) : app.status === "rejected" ? (
+                                                        <span className="font-inter text-xs font-semibold text-red-400 bg-red-400/15 border border-red-400/30 px-4 py-2 rounded-full uppercase">Rejected</span>
+                                                    ) : (
+                                                        <span className="font-inter text-xs text-white/30 italic">—</span>
+                                                    )
                                                 ) : (
                                                     <div className="flex items-center justify-center gap-2">
                                                         <button onClick={() => handleAction(app.id, "accepted")} disabled={isPending}
-                                                            className="font-heading text-xs px-4 py-2 bg-at-teal text-at-dark uppercase tracking-wider rounded-lg hover:opacity-90 transition disabled:opacity-40">Accept</button>
+                                                            className={`font-heading text-xs px-4 py-2 uppercase tracking-wider rounded-lg transition disabled:opacity-40 ${app.status === 'accepted' ? 'bg-green-500 text-white shadow-[0_0_10px_rgba(34,197,94,0.4)]' : 'bg-at-teal text-at-dark hover:opacity-90'}`}>
+                                                            Accept
+                                                        </button>
                                                         <button onClick={() => handleAction(app.id, "rejected")} disabled={isPending}
-                                                            className="font-heading text-xs px-4 py-2 bg-red-500/20 text-red-400 border border-red-500/30 uppercase tracking-wider rounded-lg hover:bg-red-500/30 transition disabled:opacity-40">Reject</button>
+                                                            className={`font-heading text-xs px-4 py-2 uppercase tracking-wider rounded-lg transition disabled:opacity-40 border ${app.status === 'rejected' ? 'bg-red-500 text-white border-red-500 shadow-[0_0_10px_rgba(239,68,68,0.4)]' : 'bg-red-500/10 text-red-400 border-red-500/30 hover:bg-red-500/20'}`}>
+                                                            Reject
+                                                        </button>
                                                     </div>
                                                 )}
                                             </td>

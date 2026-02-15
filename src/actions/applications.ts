@@ -139,3 +139,38 @@ export async function getSystemSettings() {
 
     return data;
 }
+
+export async function withdrawApplication(domainId: string) {
+    const user = await getSession();
+    if (!user) return { error: 'Not authenticated' };
+
+    if (!domainId || !isValidUUID(domainId)) {
+        return { error: 'Invalid domain' };
+    }
+
+    const supabase = await createServiceClient();
+
+    // Check freeze status
+    const { data: settings } = await supabase
+        .from('system_settings')
+        .select('frozen')
+        .single();
+
+    if (settings?.frozen) {
+        return { error: 'Applications are frozen. Cannot withdraw.' };
+    }
+
+    // Delete application
+    const { error } = await supabase
+        .from('applications')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('domain_id', domainId);
+
+    if (error) {
+        console.error('Withdraw error:', error);
+        return { error: 'Failed to withdraw application' };
+    }
+
+    return { success: true };
+}
