@@ -53,9 +53,19 @@ export function ProfileDropdown({ name, srn, role }: ProfileDropdownProps) {
                             {displayRole}
                         </div>
                     </div>
-                    <Link href="/domains" className="flex items-center gap-2 px-3 py-2 text-sm text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors font-inter" onClick={() => setOpen(false)}>
-                        Dashboard
-                    </Link>
+                    {role === 'superadmin' ? (
+                        <Link href="/admin/overview" className="flex items-center gap-2 px-3 py-2 text-sm text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors font-inter" onClick={() => setOpen(false)}>
+                            Admin Panel
+                        </Link>
+                    ) : role.startsWith('CO_') ? (
+                        <Link href="/co" className="flex items-center gap-2 px-3 py-2 text-sm text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors font-inter" onClick={() => setOpen(false)}>
+                            CO Dashboard
+                        </Link>
+                    ) : (
+                        <Link href="/domains" className="flex items-center gap-2 px-3 py-2 text-sm text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors font-inter" onClick={() => setOpen(false)}>
+                            Dashboard
+                        </Link>
+                    )}
                     <Link href="/api/auth/logout" className="flex items-center gap-2 px-3 py-2 text-sm text-red-400/60 hover:text-red-400 hover:bg-red-500/5 rounded-lg transition-colors font-inter">
                         <LogOut className="w-3.5 h-3.5" /> Logout
                     </Link>

@@ -2,10 +2,28 @@
 
 import { useState, useEffect } from "react";
 import { getMultiDomainStudents } from "@/actions/admin";
+import Tutorial from "@/components/ui/tutorial";
+import HelpButton from "@/components/ui/help-button";
+
+const TUTORIAL_STEPS = [
+    {
+        title: "Multi-Domain Analytics",
+        description: "This page provides a comprehensive view of all domains with detailed statistics. You can see application counts, acceptance rates, and pending reviews for each domain."
+    },
+    {
+        title: "Compare Domains",
+        description: "Use this view to compare performance across different domains. Look for patterns in application numbers, acceptance rates, and identify domains that may need attention."
+    },
+    {
+        title: "Quick Actions",
+        description: "From here you can quickly identify bottlenecks and make data-driven decisions about recruitment across all domains simultaneously."
+    }
+];
 
 export default function MultiDomainPage() {
     const [students, setStudents] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [showTutorial, setShowTutorial] = useState(false);
 
     useEffect(() => { loadData(); }, []);
 
@@ -76,6 +94,10 @@ export default function MultiDomainPage() {
                     </div>
                 </>
             )}
+
+            {/* Tutorial */}
+            <Tutorial pageKey="admin-multi-domain" steps={TUTORIAL_STEPS} forceShow={showTutorial} onClose={() => setShowTutorial(false)} />
+            <HelpButton onClick={() => setShowTutorial(true)} />
         </div>
     );
 }

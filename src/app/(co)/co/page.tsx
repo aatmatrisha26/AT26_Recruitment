@@ -2,12 +2,30 @@
 
 import { useState, useEffect } from "react";
 import { getCODomainInfo } from "@/actions/co";
+import Tutorial from "@/components/ui/tutorial";
+import HelpButton from "@/components/ui/help-button";
 import { Users, CheckCircle, Clock, XCircle, MapPin, MessageCircle, Star } from "lucide-react";
+
+const TUTORIAL_STEPS = [
+    {
+        title: "CO Dashboard Overview",
+        description: "Welcome, Coordinator! This is your domain's dashboard. Track total applicants, pending interviews, and decisions made."
+    },
+    {
+        title: "Interview Students",
+        description: "Go to 'Recruitments' to see students who have applied. Interview them and mark complete with scores (1-10)."
+    },
+    {
+        title: "Make Final Decisions",
+        description: "After interviews, head to 'Leaderboard' to see ranked candidates. Accept or reject based on their performance."
+    }
+];
 
 export default function CODashboardPage() {
     const [domain, setDomain] = useState<any>(null);
     const [stats, setStats] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const [showTutorial, setShowTutorial] = useState(false);
 
     useEffect(() => {
         async function load() {
@@ -112,6 +130,10 @@ export default function CODashboardPage() {
                     </p>
                 </div>
             )}
+
+            {/* Tutorial */}
+            <Tutorial pageKey="co-dashboard" steps={TUTORIAL_STEPS} forceShow={showTutorial} onClose={() => setShowTutorial(false)} />
+            <HelpButton onClick={() => setShowTutorial(true)} />
         </div>
     );
 }

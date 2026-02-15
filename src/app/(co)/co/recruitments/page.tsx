@@ -2,6 +2,13 @@
 
 import { useState, useEffect, useTransition } from "react";
 import { getApplicantsForDomain, markInterviewDone } from "@/actions/co";
+import Tutorial from "@/components/ui/tutorial";
+import HelpButton from "@/components/ui/help-button";
+
+const TUTORIAL_STEPS = [
+    { title: "Interview Applicants", description: "See all applicants. Enter their score (1-10) after the interview and click ✓ to mark it done." },
+    { title: "Search & Filter", description: "Use the search bar to find applicants by name/SRN. Filter by year if needed." }
+];
 
 export default function CORecruitmentsPage() {
     const [applicants, setApplicants] = useState<any[]>([]);
@@ -11,6 +18,7 @@ export default function CORecruitmentsPage() {
     const [scores, setScores] = useState<Record<string, string>>({});
     const [isPending, startTransition] = useTransition();
     const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
+    const [showTutorial, setShowTutorial] = useState(false);
 
     useEffect(() => {
         loadData();
@@ -160,6 +168,10 @@ export default function CORecruitmentsPage() {
                     <p className="font-space text-sm text-white/30 mt-3 text-right">{filtered.length} pending</p>
                 </>
             )}
+
+            {/* Tutorial */}
+            <Tutorial pageKey="co-recruitments" steps={TUTORIAL_STEPS} forceShow={showTutorial} onClose={() => setShowTutorial(false)} />
+            <HelpButton onClick={() => setShowTutorial(true)} />
         </div>
     );
 }

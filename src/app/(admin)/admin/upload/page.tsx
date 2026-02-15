@@ -3,6 +3,23 @@
 import { useState, useEffect, useTransition } from "react";
 import { freezeResults, unfreezeResults, publishResults, updateWhatsAppLink, exportCSV } from "@/actions/admin";
 import { getDomains, getSystemSettings } from "@/actions/applications";
+import Tutorial from "@/components/ui/tutorial";
+import HelpButton from "@/components/ui/help-button";
+
+const TUTORIAL_STEPS = [
+    {
+        title: "Upload Results",
+        description: "This page allows you to bulk upload recruitment results via CSV file. Download the template first to ensure your file is formatted correctly."
+    },
+    {
+        title: "Manage Settings",
+        description: "You can freeze/unfreeze results, publish them to students, update WhatsApp links for each domain, and export data as CSV for analysis."
+    },
+    {
+        title: "Domain Controls",
+        description: "Each domain has individual controls for WhatsApp links. Make sure to update these links so students can join their respective domain groups after selection."
+    }
+];
 
 export default function AdminUploadPage() {
     const [domains, setDomains] = useState<any[]>([]);
@@ -11,6 +28,7 @@ export default function AdminUploadPage() {
     const [isPending, startTransition] = useTransition();
     const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
     const [whatsappLinks, setWhatsappLinks] = useState<Record<string, string>>({});
+    const [showTutorial, setShowTutorial] = useState(false);
 
     useEffect(() => { loadData(); }, []);
 
@@ -159,6 +177,8 @@ export default function AdminUploadPage() {
                     ))}
                 </div>
             </div>
-        </div>
+            {/* Tutorial */}
+            <Tutorial pageKey="admin-upload" steps={TUTORIAL_STEPS} forceShow={showTutorial} onClose={() => setShowTutorial(false)} />
+            <HelpButton onClick={() => setShowTutorial(true)} />        </div>
     );
 }
