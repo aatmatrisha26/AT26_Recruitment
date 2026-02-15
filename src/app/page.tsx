@@ -94,7 +94,7 @@ export default async function LandingPage() {
           </div>
 
           {/* Stats row */}
-          <div className="flex items-center justify-center gap-6 sm:gap-8 mt-10 sm:mt-14 animate-fade-in-up-d4">
+          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 mt-10 sm:mt-14 animate-fade-in-up-d4">
             <div className="text-center">
               <p className="font-heading text-2xl sm:text-3xl text-at-text">14</p>
               <p className="font-retro text-[8px] sm:text-[10px] text-at-text/20 uppercase tracking-widest">Domains</p>
@@ -128,6 +128,19 @@ export default async function LandingPage() {
 
       {/* ===== HOW IT WORKS ===== */}
       <HowItWorksSection />
+
+      {/* ===== FOOTER ===== */}
+      <footer className="relative z-10 mt-8 sm:mt-12">
+        <div className="h-px w-full" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,32,110,0.2), rgba(0,240,255,0.15), transparent)' }} />
+        <div className="px-6 sm:px-10 py-6 sm:py-8 text-center">
+          <p className="font-retro text-[8px] sm:text-[9px] tracking-[0.2em] uppercase text-at-text/20 mb-1.5">
+            Created by <span className="text-at-pink/50">Dennis</span> & <span className="text-at-cyan/50">Ashmith</span>
+          </p>
+          <p className="font-retro text-[7px] sm:text-[8px] tracking-[0.15em] uppercase text-at-text/12">
+            AT&apos;26 Tech Heads · All rights reserved
+          </p>
+        </div>
+      </footer>
     </main>
   );
 }
