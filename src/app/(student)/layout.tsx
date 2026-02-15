@@ -26,22 +26,22 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
     ];
 
     return (
-        <div className="flex flex-col md:flex-row min-h-screen" style={{ background: 'linear-gradient(160deg, #1a1a2e 0%, #16213e 40%, #1a1a2e 100%)' }}>
+        <div className="flex flex-col md:flex-row min-h-screen bg-at-void">
             <Sidebar open={true} setOpen={() => { }}>
-                <SidebarBody className="justify-between gap-4 h-full" style={{ background: 'linear-gradient(180deg, #0d1117 0%, #161b22 100%)' }}>
+                <SidebarBody className="justify-between gap-4 h-full" style={{ background: 'linear-gradient(180deg, #0A0A0C 0%, #111113 100%)' }}>
                     <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
                         {/* Logo */}
                         <Link href="/" className="flex items-center gap-3 py-3 mb-4 px-1">
                             <Image src="/AT26_logo.png" alt="AT'26" width={40} height={40} className="rounded-xl shrink-0 shadow-lg" />
                             <div className="whitespace-pre">
-                                <span className="font-heading text-white text-xl tracking-wider">AATMATRISHA</span>
-                                <span className="font-space text-[9px] text-white/30 block tracking-wider">2026 RECRUITMENTS</span>
+                                <span className="font-heading text-at-text text-xl tracking-tight">AATMATRISHA</span>
+                                <span className="font-inter text-[9px] text-at-text/25 block tracking-wider font-medium">2026 RECRUITMENTS</span>
                             </div>
                         </Link>
 
                         {/* Nav section */}
                         <div className="mb-2 px-3">
-                            <span className="font-space text-[9px] text-white/20 uppercase tracking-[0.2em]">Menu</span>
+                            <span className="font-inter text-[9px] text-at-text/20 uppercase tracking-[0.2em] font-medium">Menu</span>
                         </div>
 
                         <div className="flex flex-col gap-0.5">
@@ -52,7 +52,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
 
                         {/* Quick links */}
                         <div className="mt-6 mb-2 px-3">
-                            <span className="font-space text-[9px] text-white/20 uppercase tracking-[0.2em]">Quick Links</span>
+                            <span className="font-inter text-[9px] text-at-text/20 uppercase tracking-[0.2em] font-medium">Quick Links</span>
                         </div>
                         <SidebarLink link={{ label: "Home", href: "/", icon: <Home className="text-white/30 h-5 w-5 shrink-0" /> }} />
                     </div>

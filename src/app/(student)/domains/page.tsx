@@ -9,14 +9,6 @@ import HelpButton from "@/components/ui/help-button";
 import { useRouter } from "next/navigation";
 import { MapPin, ArrowRight } from "lucide-react";
 
-// Darker, contrasted gradient colors
-const CARD_COLORS = [
-    { bg: 'linear-gradient(135deg, #c4245a, #9e1d48)', accent: '#FF3378' },
-    { bg: 'linear-gradient(135deg, #c4622e, #a3502a)', accent: '#F47B58' },
-    { bg: 'linear-gradient(135deg, #2a8f88, #1e6e69)', accent: '#4ECDC4' },
-    { bg: 'linear-gradient(135deg, #2d3561, #1e2545)', accent: '#8892b0' },
-];
-
 // Domain core info
 const DOMAIN_CORES: Record<string, { coreName: string; coreTitle: string }> = {
     tech: { coreName: "Ashmith", coreTitle: "Tech Core" },
@@ -58,67 +50,61 @@ export default function DomainsPage() {
     return (
         <div>
             {/* Header + CTA row */}
-            <div className="mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+            <div className="mb-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
                 <div>
                     <div className="flex items-center gap-3 mb-3">
-                        <div className="w-1.5 h-10 rounded-full bg-at-pink" />
-                        <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl text-white tracking-wider">EXPLORE DOMAINS</h1>
+                        <div className="w-1 h-10 rounded-full bg-linear-to-b from-at-pink to-at-peach" />
+                        <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl text-at-text tracking-tight">EXPLORE DOMAINS</h1>
                     </div>
-                    <p className="font-inter text-base text-white/40 ml-5 pl-2">Find where you belong. Pick your crew.</p>
+                    <p className="font-inter text-base text-at-text/35 ml-5 pl-2">Find where you belong. Pick your crew.</p>
                     <div className="flex flex-wrap gap-2 mt-4 ml-5 pl-2">
-                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-at-pink/10 border border-at-pink/20">
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-at-pink/5 border border-at-pink/15 backdrop-blur-sm">
                             <div className="w-1.5 h-1.5 rounded-full bg-at-pink" />
-                            <span className="font-space text-[11px] text-at-pink tracking-wider">14 Domains</span>
+                            <span className="font-inter text-[11px] font-medium text-at-pink tracking-wider">14 Domains</span>
                         </div>
-                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-at-teal/10 border border-at-teal/20">
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-at-teal/5 border border-at-teal/15 backdrop-blur-sm">
                             <div className="w-1.5 h-1.5 rounded-full bg-at-teal" />
-                            <span className="font-space text-[11px] text-at-teal tracking-wider">Open for All Years</span>
+                            <span className="font-inter text-[11px] font-medium text-at-teal tracking-wider">Open for All Years</span>
                         </div>
                     </div>
                 </div>
                 <button
                     onClick={() => router.push("/register")}
-                    className="inline-flex items-center gap-2 font-heading tracking-wider text-base px-8 py-3 bg-at-pink text-white rounded-xl hover:bg-at-orange transition-all duration-200 shadow-[0_0_20px_rgba(255,51,120,0.2)] hover:shadow-[0_0_30px_rgba(244,123,88,0.3)] shrink-0"
+                    className="btn-pill btn-pill-primary inline-flex items-center gap-2 text-base px-8 py-3 shrink-0"
                 >
                     Register Now
                     <ArrowRight className="w-4 h-4" />
                 </button>
             </div>
 
-            {/* Domain Cards — 2 per row */}
+            {/* Domain Cards — Dark Glassmorphism, 2 per row */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {DOMAINS_DATA.map((domain, index) => {
-                    const color = CARD_COLORS[index % CARD_COLORS.length];
                     return (
                         <div
                             key={domain.slug}
-                            className="group relative rounded-2xl overflow-hidden transition-transform duration-200 hover:-translate-y-1 hover:shadow-2xl cursor-pointer"
-                            style={{ background: color.bg }}
+                            className="group glass-card relative rounded-2xl overflow-hidden cursor-pointer"
                             onClick={() => setSelectedDomain(domain)}
                         >
-                            <div className="absolute inset-0 opacity-[0.06]" style={{
-                                backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)',
-                                backgroundSize: '0.5rem 0.5rem',
-                            }} />
-
-                            <div className="absolute top-0 right-6 h-14 w-10 bg-white/90 [clip-path:polygon(0%_0%,_100%_0%,_100%_100%,_50%_75%,_0%_100%)] flex items-start justify-center pt-2.5">
-                                <span className="font-heading text-lg" style={{ color: color.accent }}>{domain.icon}</span>
+                            {/* Subtle icon badge */}
+                            <div className="absolute top-4 right-5 w-10 h-10 rounded-full bg-at-pink/8 border border-at-pink/10 flex items-center justify-center group-hover:bg-at-pink/15 group-hover:border-at-pink/25 transition-all duration-300">
+                                <span className="font-heading text-sm text-at-pink/70 group-hover:text-at-pink transition-colors">{domain.icon}</span>
                             </div>
 
-                            <div className="relative p-6 flex flex-col min-h-[190px]">
-                                <h3 className="font-heading text-2xl text-white tracking-wider pr-14">{domain.name}</h3>
-                                <p className="font-inter text-sm text-white/90 leading-relaxed mt-2 max-w-[90%]">{domain.description}</p>
+                            <div className="relative p-6 flex flex-col min-h-47.5">
+                                <h3 className="font-heading text-2xl text-at-text tracking-tight pr-14 group-hover:text-gradient-heat">{domain.name}</h3>
+                                <p className="font-inter text-sm text-at-text/50 leading-relaxed mt-2 max-w-[90%] group-hover:text-at-text/65 transition-colors duration-300">{domain.description}</p>
 
-                                <div className="h-px bg-white/20 my-4" />
+                                <div className="h-px bg-white/6 my-4 group-hover:bg-at-pink/15 transition-colors duration-300" />
 
                                 <div className="flex items-end justify-between mt-auto">
                                     <div className="flex items-center gap-1.5">
-                                        <MapPin className="w-3.5 h-3.5 text-white/70" />
-                                        <span className="font-space text-sm text-white/90 font-medium">{domain.venue}</span>
+                                        <MapPin className="w-3.5 h-3.5 text-at-text/30" />
+                                        <span className="font-inter text-sm text-at-text/50 font-medium">{domain.venue}</span>
                                     </div>
                                     <button
                                         onClick={(e) => { e.stopPropagation(); setSelectedDomain(domain); }}
-                                        className="rounded-full bg-white/20 backdrop-blur-sm border border-white/10 px-4 py-1.5 text-sm font-space font-semibold text-white hover:bg-white/30 transition-colors"
+                                        className="btn-pill rounded-full bg-white/6 backdrop-blur-sm border border-white/8 px-4 py-1.5 text-sm font-inter font-medium text-at-text/70 hover:bg-at-pink/10 hover:border-at-pink/20 hover:text-at-pink transition-all duration-300"
                                     >
                                         Know More
                                     </button>
@@ -132,11 +118,11 @@ export default function DomainsPage() {
             {/* ===== HOW IT WORKS ===== */}
             <div className="mt-16 mb-4">
                 <div className="text-center mb-10">
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-at-orange/30 bg-at-orange/10 mb-4">
-                        <span className="font-space text-[11px] tracking-[0.15em] uppercase text-at-orange">5 Simple Steps</span>
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-at-peach/20 bg-at-peach/5 backdrop-blur-sm mb-4">
+                        <span className="font-inter text-[11px] font-medium tracking-[0.15em] uppercase text-at-peach">5 Simple Steps</span>
                     </div>
-                    <h2 className="font-heading text-3xl sm:text-4xl text-white tracking-wider">HOW IT WORKS</h2>
-                    <p className="font-inter text-sm text-white/40 mt-2">From login to results — the full process.</p>
+                    <h2 className="font-heading text-3xl sm:text-4xl text-at-text tracking-tight">HOW IT WORKS</h2>
+                    <p className="font-inter text-sm text-at-text/35 mt-2">From login to results — the full process.</p>
                 </div>
 
                 {/* Desktop Flow */}
@@ -145,19 +131,19 @@ export default function DomainsPage() {
                         <div key={i} className="relative group">
                             {/* Arrow Connector */}
                             {i < 4 && (
-                                <div className="absolute top-[55px] left-[calc(50%+40px)] w-[calc(100%-20px)] flex items-center justify-center pointer-events-none z-10">
+                                <div className="absolute top-13.75 left-[calc(50%+40px)] w-[calc(100%-20px)] flex items-center justify-center pointer-events-none z-10">
                                     <svg className="w-8 h-4 animate-pulse-slow" style={{ color: step.color, opacity: 0.5 }} fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
                                     </svg>
                                 </div>
                             )}
-                            <div className="relative bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/10 rounded-xl p-4 hover:border-white/20 hover:-translate-y-1 transition-all duration-200 h-full">
-                                <div className="w-10 h-10 rounded-lg mb-2 flex items-center justify-center group-hover:scale-110 transition-transform"
-                                    style={{ background: `${step.color}20`, border: `1px solid ${step.color}30` }}>
+                            <div className="glass-card relative rounded-2xl p-4 h-full">
+                                <div className="w-10 h-10 rounded-full mb-2 flex items-center justify-center group-hover:scale-110 transition-transform"
+                                    style={{ background: `${step.color}10`, border: `1px solid ${step.color}20` }}>
                                     <div className="font-heading text-lg" style={{ color: step.color }}>{step.num}</div>
                                 </div>
-                                <h3 className="font-heading text-sm text-white tracking-wider mb-1.5 uppercase">{step.title}</h3>
-                                <p className="font-inter text-[11px] text-white/40 leading-relaxed">{step.desc}</p>
+                                <h3 className="font-heading text-sm text-at-text tracking-tight mb-1.5 uppercase">{step.title}</h3>
+                                <p className="font-inter text-[11px] text-at-text/35 leading-relaxed">{step.desc}</p>
                             </div>
                         </div>
                     ))}
@@ -169,15 +155,15 @@ export default function DomainsPage() {
                         <div key={i} className="relative flex gap-3 items-start">
                             {i < 4 && (
                                 <div className="absolute top-12 left-5 w-0.5 h-[calc(100%+4px)]"
-                                    style={{ background: `linear-gradient(to bottom, ${step.color}30, ${HOW_IT_WORKS_STEPS[i + 1].color}30)` }} />
+                                    style={{ background: `linear-gradient(to bottom, ${step.color}20, ${HOW_IT_WORKS_STEPS[i + 1].color}20)` }} />
                             )}
-                            <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center z-10"
-                                style={{ background: `${step.color}20`, border: `1px solid ${step.color}30` }}>
+                            <div className="shrink-0 w-10 h-10 rounded-full flex items-center justify-center z-10"
+                                style={{ background: `${step.color}10`, border: `1px solid ${step.color}20` }}>
                                 <span className="font-heading text-base" style={{ color: step.color }}>{step.num}</span>
                             </div>
-                            <div className="flex-1 bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/10 rounded-xl p-3.5">
-                                <h3 className="font-heading text-sm text-white tracking-wider mb-1 uppercase">{step.title}</h3>
-                                <p className="font-inter text-[11px] text-white/40 leading-relaxed">{step.desc}</p>
+                            <div className="flex-1 glass-card rounded-xl p-3.5">
+                                <h3 className="font-heading text-sm text-at-text tracking-tight mb-1 uppercase">{step.title}</h3>
+                                <p className="font-inter text-[11px] text-at-text/35 leading-relaxed">{step.desc}</p>
                             </div>
                         </div>
                     ))}
