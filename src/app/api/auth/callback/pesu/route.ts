@@ -1,3 +1,4 @@
+
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServiceClient } from '@/lib/supabase/server';
@@ -5,18 +6,25 @@ import { deriveYear } from '@/lib/auth';
 
 const PESU_OAUTH_BASE_URL = 'https://pesu-oauth2.vercel.app';
 
+function getBaseUrl(request: NextRequest): string {
+    const host = request.headers.get('x-forwarded-host') || request.headers.get('host') || '';
+    const protocol = request.headers.get('x-forwarded-proto') || 'https';
+    return `${protocol}://${host}`;
+}
+
 export async function GET(request: NextRequest) {
+    const baseUrl = getBaseUrl(request);
     const code = request.nextUrl.searchParams.get('code');
     const state = request.nextUrl.searchParams.get('state');
     const error = request.nextUrl.searchParams.get('error');
 
     if (error) {
         console.error('PESU OAuth error:', error);
-        return NextResponse.redirect(new URL(`/?error=${error}`, request.url));
+        return NextResponse.redirect(new URL(`/?error=${error}`, baseUrl));
     }
 
     if (!code || !state) {
-        return NextResponse.redirect(new URL('/?error=missing_params', request.url));
+        return NextResponse.redirect(new URL('/?error=missing_params', baseUrl));
     }
 
     const cookieStore = await cookies();
@@ -24,22 +32,19 @@ export async function GET(request: NextRequest) {
     const storedState = cookieStore.get('pesu_oauth_state')?.value;
 
     if (!codeVerifier) {
-        return NextResponse.redirect(new URL('/?error=session_expired', request.url));
+        return NextResponse.redirect(new URL('/?error=session_expired', baseUrl));
     }
 
     if (!storedState || state !== storedState) {
-        return NextResponse.redirect(new URL('/?error=state_mismatch', request.url));
+        return NextResponse.redirect(new URL('/?error=state_mismatch', baseUrl));
     }
 
-    // Extract returnUrl from state (delimiter is now | not _)
     let returnUrl = '/domains';
     const pipeIdx = state.indexOf('|');
     if (pipeIdx !== -1) {
         try {
             returnUrl = Buffer.from(state.slice(pipeIdx + 1), 'base64').toString('utf-8');
-        } catch {
-            // Invalid base64, use default
-        }
+        } catch {  }
     }
 
     try {
@@ -64,7 +69,7 @@ export async function GET(request: NextRequest) {
         if (!tokenResponse.ok) {
             const errorData = await tokenResponse.text();
             console.error('Token exchange failed:', tokenResponse.status, errorData);
-            return NextResponse.redirect(new URL('/?error=token_failed', request.url));
+            return NextResponse.redirect(new URL('/?error=token_failed', baseUrl));
         }
 
         const tokenData = await tokenResponse.json();
@@ -75,7 +80,7 @@ export async function GET(request: NextRequest) {
 
         if (!profileResponse.ok) {
             console.error('Profile fetch failed:', profileResponse.status);
-            return NextResponse.redirect(new URL('/?error=profile_failed', request.url));
+            return NextResponse.redirect(new URL('/?error=profile_failed', baseUrl));
         }
 
         const profile = await profileResponse.json();
@@ -87,44 +92,31 @@ export async function GET(request: NextRequest) {
 
         const superAdminSRNs = (process.env.SUPERADMIN_SRNS || '').split(',').map(s => s.trim());
         let role = 'student';
-        if (superAdminSRNs.includes(srn)) {
-            role = 'superadmin';
-        }
+        if (superAdminSRNs.includes(srn)) role = 'superadmin';
 
         const supabase = await createServiceClient();
         const { data: existingUser } = await supabase
-            .from('users')
-            .select('role')
-            .eq('srn', srn)
-            .single();
+            .from('users').select('role').eq('srn', srn).single();
 
         if (existingUser?.role && existingUser.role !== 'student') {
             role = existingUser.role;
         }
 
-        await supabase
-            .from('users')
-            .upsert(
-                { srn, name, email, phone, year, role },
-                { onConflict: 'srn' }
-            );
+        await supabase.from('users').upsert(
+            { srn, name, email, phone, year, role },
+            { onConflict: 'srn' }
+        );
 
-        // Build redirect URL based on role
         const sessionData = { srn, name, email, role };
-
         let redirectPath = returnUrl;
-        if (role === 'superadmin') {
-            redirectPath = '/admin/overview';
-        } else if (role.startsWith('CO_')) {
-            redirectPath = '/co/recruitments';
-        }
+        if (role === 'superadmin') redirectPath = '/admin/overview';
+        else if (role.startsWith('CO_')) redirectPath = '/co/recruitments';
 
-        // Set all cookies on the redirect response directly
-        const response = NextResponse.redirect(new URL(redirectPath, request.url));
+        const response = NextResponse.redirect(new URL(redirectPath, baseUrl));
 
         response.cookies.set('at26_session', JSON.stringify(sessionData), {
             httpOnly: false,
-            secure: process.env.NODE_ENV === 'production',
+            secure: true,
             sameSite: 'lax',
             maxAge: 86400 * 7,
             path: '/',
@@ -136,6 +128,6 @@ export async function GET(request: NextRequest) {
         return response;
     } catch (error) {
         console.error('OAuth callback error:', error);
-        return NextResponse.redirect(new URL('/?error=callback_failed', request.url));
+        return NextResponse.redirect(new URL('/?error=callback_failed', baseUrl));
     }
 }

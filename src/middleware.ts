@@ -1,29 +1,23 @@
+
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// Simple IP-based rate limiter for middleware (edge runtime compatible)
 const ipRequests = new Map<string, { count: number; firstRequest: number }>();
-const AUTH_RATE_LIMIT = 20;       // max attempts
-const AUTH_RATE_WINDOW = 60_000;  // 60 seconds
+const AUTH_RATE_LIMIT = 20;
+const AUTH_RATE_WINDOW = 60_000;
 
 function checkAuthRateLimit(ip: string): boolean {
     const now = Date.now();
     const entry = ipRequests.get(ip);
-
     if (!entry || now - entry.firstRequest > AUTH_RATE_WINDOW) {
         ipRequests.set(ip, { count: 1, firstRequest: now });
-        return true; // allowed
+        return true;
     }
-
-    if (entry.count >= AUTH_RATE_LIMIT) {
-        return false; // blocked
-    }
-
+    if (entry.count >= AUTH_RATE_LIMIT) return false;
     entry.count++;
     return true;
 }
 
-// Cleanup every 5 minutes (only runs when middleware is called)
 let lastCleanup = Date.now();
 function cleanupIpStore() {
     const now = Date.now();
@@ -36,36 +30,59 @@ function cleanupIpStore() {
     }
 }
 
+function getBaseUrl(request: NextRequest): string {
+    const host = request.headers.get('x-forwarded-host')
+        || request.headers.get('host')
+        || '';
+    const protocol = request.headers.get('x-forwarded-proto') || 'https';
+    return `${protocol}://${host}`;
+}
+
 export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
     const sessionCookie = request.cookies.get('at26_session');
+    const baseUrl = getBaseUrl(request);
 
     cleanupIpStore();
 
-    // Rate limit auth routes (only init, not callback)
-    if (pathname.startsWith('/api/auth') && !pathname.includes('/callback')) {
-        const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
-            || request.headers.get('x-real-ip')
-            || 'unknown';
-
-        if (!checkAuthRateLimit(ip)) {
-            return new NextResponse('Too many requests. Please wait before trying again.', {
-                status: 429,
-                headers: { 'Retry-After': '60' },
-            });
+    if (pathname.startsWith('/api/auth')) {
+        if (!pathname.includes('/callback')) {
+            const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+                || request.headers.get('x-real-ip')
+                || 'unknown';
+            if (!checkAuthRateLimit(ip)) {
+                return new NextResponse('Too many requests.', {
+                    status: 429,
+                    headers: { 'Retry-After': '60' },
+                });
+            }
         }
         return NextResponse.next();
     }
 
-    // Public routes - no auth needed
+    if (request.method === 'POST' && request.headers.get('next-action')) {
+        return addSecurityHeaders(NextResponse.next());
+    }
+
+    const isRSCOrPrefetch =
+        request.headers.get('rsc') === '1' ||
+        request.headers.get('next-router-prefetch') === '1' ||
+        request.headers.get('purpose') === 'prefetch' ||
+        request.headers.get('next-url') !== null;
+
     const publicRoutes = ['/', '/domains'];
     if (publicRoutes.some(route => pathname === route)) {
         return addSecurityHeaders(NextResponse.next());
     }
 
-    // If no session, redirect to login with return URL
     if (!sessionCookie?.value) {
-        const loginUrl = new URL('/api/auth/pesu', request.url);
+
+        if (isRSCOrPrefetch) {
+
+            return new NextResponse(null, { status: 200 });
+        }
+
+        const loginUrl = new URL('/api/auth/pesu', baseUrl);
         loginUrl.searchParams.set('returnUrl', pathname);
         return NextResponse.redirect(loginUrl);
     }
@@ -73,28 +90,27 @@ export function middleware(request: NextRequest) {
     try {
         const session = JSON.parse(sessionCookie.value);
 
-        // CO users on student routes → redirect to CO panel
-        const studentRoutes = ['/domains', '/register', '/status'];
-        if (session.role?.startsWith('CO_') && studentRoutes.some(r => pathname === r)) {
-            return NextResponse.redirect(new URL('/co', request.url));
+        const studentOnlyRoutes = ['/register', '/status'];
+        if (session.role?.startsWith('CO_') && studentOnlyRoutes.some(r => pathname === r)) {
+            if (isRSCOrPrefetch) return addSecurityHeaders(NextResponse.next());
+            return NextResponse.redirect(new URL('/co', baseUrl));
         }
 
-        // CO routes - only CO roles
         if (pathname.startsWith('/co')) {
             if (!session.role?.startsWith('CO_')) {
-                return NextResponse.redirect(new URL('/domains', request.url));
+                if (isRSCOrPrefetch) return addSecurityHeaders(NextResponse.next());
+                return NextResponse.redirect(new URL('/domains', baseUrl));
             }
         }
 
-        // Admin routes - only superadmin
         if (pathname.startsWith('/admin')) {
             if (session.role !== 'superadmin') {
-                return NextResponse.redirect(new URL('/domains', request.url));
+                if (isRSCOrPrefetch) return addSecurityHeaders(NextResponse.next());
+                return NextResponse.redirect(new URL('/domains', baseUrl));
             }
         }
     } catch {
-        // Invalid cookie — clear and redirect
-        const response = NextResponse.redirect(new URL('/', request.url));
+        const response = NextResponse.redirect(new URL('/', baseUrl));
         response.cookies.delete('at26_session');
         return response;
     }
@@ -112,5 +128,7 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
 }
 
 export const config = {
-    matcher: ['/((?!_next/static|_next/image|api/auth|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
+    matcher: [
+        '/((?!_next/static|_next/image|favicon\\.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
+    ],
 };

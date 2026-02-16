@@ -12,10 +12,10 @@ export default async function LandingPage() {
 
   return (
     <main className="relative min-h-screen bg-at-void crt-overlay" style={{ overflowX: 'hidden' }}>
-      {/* ===== ANIMATED BACKDROP ===== */}
+      {}
       <HeroBackdrop />
 
-      {/* ===== NAV ===== */}
+      {}
       <nav className="relative z-50 flex items-center justify-between px-5 sm:px-8 lg:px-12 py-5">
         <Link href="/" className="font-heading text-xl sm:text-2xl lg:text-3xl tracking-tight text-at-text hover:text-gradient-heat transition-all duration-300">
           AATMATRISHA
@@ -34,16 +34,16 @@ export default async function LandingPage() {
         </div>
       </nav>
 
-      {/* ===== HERO ===== */}
+      {}
       <section className="relative z-10 flex flex-col items-center justify-center px-4 sm:px-8 lg:px-12 pt-12 pb-10 sm:pt-20 sm:pb-14" style={{ minHeight: 'calc(100vh - 240px)' }}>
         <div className="relative w-full max-w-4xl text-center animate-fade-in-up">
-          {/* Status pill */}
+          {}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 sm:px-5 sm:py-2 rounded-full border border-at-pink/20 bg-at-pink/5 backdrop-blur-sm mb-6 sm:mb-8 animate-fade-in-up-d1 animate-neon-pulse">
             <div className="w-2 h-2 rounded-full bg-at-pink animate-pulse" />
             <span className="font-retro text-[9px] sm:text-[10px] tracking-[0.15em] uppercase text-at-pink">Now Recruiting — AT&apos;26</span>
           </div>
 
-          {/* Main heading — responsive text that never overflows */}
+          {}
           <h1 className="font-heading leading-[0.9] text-at-text mb-1 animate-fade-in-up-d1 font-black tracking-tighter"
             style={{ fontSize: 'clamp(2rem, 6vw, 4.5rem)' }}>
             JOIN THE
@@ -53,7 +53,7 @@ export default async function LandingPage() {
             <span className="text-glow-pink text-gradient-heat">HEATWAVE</span>
           </h1>
 
-          {/* Accent line */}
+          {}
           <div className="animate-fade-in-up-d2 mb-6 sm:mb-8">
             <span className="font-inter text-at-peach/60 text-[10px] sm:text-xs tracking-[0.2em] uppercase font-medium">est. 2026 · heatwave edition</span>
           </div>
@@ -62,7 +62,7 @@ export default async function LandingPage() {
             Pick your domain, show up for the interview, and become part of something legendary.
           </p>
 
-          {/* CTA */}
+          {}
           {session ? (
             <Link
               href={
@@ -96,7 +96,7 @@ export default async function LandingPage() {
             </a>
           )}
 
-          {/* Stats row */}
+          {}
           <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 mt-10 sm:mt-14 animate-fade-in-up-d4">
             <div className="text-center">
               <p className="font-heading text-2xl sm:text-3xl text-at-text">14</p>
@@ -116,7 +116,7 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* ===== MARQUEE ===== */}
+      {}
       <div className="relative z-10 border-t border-b border-white/6 bg-white/2">
         <div className="overflow-hidden py-3 sm:py-4">
           <div className="animate-marquee whitespace-nowrap flex">
@@ -129,10 +129,10 @@ export default async function LandingPage() {
         </div>
       </div>
 
-      {/* ===== HOW IT WORKS ===== */}
+      {}
       <HowItWorksSection />
 
-      {/* ===== FOOTER ===== */}
+      {}
       <footer className="relative z-10 mt-8 sm:mt-12 px-6 sm:px-10 pb-8 sm:pb-10">
         <div className="h-px w-full mb-6 sm:mb-8" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,32,110,0.2), rgba(0,240,255,0.15), transparent)' }} />
         <div className="glass-card rounded-xl sm:rounded-2xl neon-border-pink max-w-md mx-auto px-6 py-5 sm:px-8 sm:py-6 text-center" style={{ boxShadow: '0 0 30px rgba(255,32,110,0.05)' }}>
