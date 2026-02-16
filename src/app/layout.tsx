@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AT'26 Recruitments — Aatmatrisha 2026",
+  title: "AATMATRISHA 2026 - Recruitment",
   description: "Join the Aatmatrisha 2026 team. Apply to domains, get interviewed, and be part of something legendary.",
+  keywords: ["Aatmatrisha", "PES University", "Recruitment", "College Fest", "AT26"],
+  authors: [{ name: "Team Aatmatrisha" }],
 };
 
 export default function RootLayout({
