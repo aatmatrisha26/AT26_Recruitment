@@ -1,3 +1,4 @@
+// src/components/ui/profile-dropdown.tsx
 "use client";
 
 import { useState, useRef, useEffect } from "react";
@@ -66,18 +67,18 @@ export function ProfileDropdown({ name, srn, role }: ProfileDropdownProps) {
                             Dashboard
                         </Link>
                     )}
-                    <Link href="/api/auth/logout" className="flex items-center gap-2 px-3 py-2 text-sm text-red-400/60 hover:text-red-400 hover:bg-red-500/5 rounded-lg transition-colors font-inter">
+                    <button
+                        onClick={() => { window.location.href = '/api/auth/logout'; }}
+                        className="flex items-center gap-2 px-3 py-2 text-sm text-red-400/60 hover:text-red-400 hover:bg-red-500/5 rounded-lg transition-colors font-inter w-full"
+                    >
                         <LogOut className="w-3.5 h-3.5" /> Logout
-                    </Link>
+                    </button>
                 </div>
             )}
         </div>
     );
 }
 
-/**
- * Sidebar version of profile card — for use in student/CO/admin layouts
- */
 export function SidebarProfile({ name, srn, role, expanded }: ProfileDropdownProps & { expanded: boolean }) {
     const displayRole = role === 'superadmin' ? 'Super Admin'
         : role.startsWith('CO_') ? `CO – ${role.replace('CO_', '').charAt(0) + role.replace('CO_', '').slice(1).toLowerCase()}`

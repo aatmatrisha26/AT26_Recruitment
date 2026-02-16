@@ -1,4 +1,4 @@
-
+// src/app/api/auth/pesu/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 
 const PESU_OAUTH_BASE_URL = 'https://pesu-oauth2.vercel.app';
@@ -14,7 +14,9 @@ async function sha256Base64URL(plain: string): Promise<string> {
     const data = encoder.encode(plain);
     const digest = await crypto.subtle.digest('SHA-256', data);
     return btoa(String.fromCharCode(...new Uint8Array(digest)))
-        .replace(/\+/g, '-').replace(/\
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/g, '');
 }
 
 function getBaseUrl(request: NextRequest): string {
