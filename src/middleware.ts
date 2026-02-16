@@ -42,8 +42,8 @@ export function middleware(request: NextRequest) {
 
     cleanupIpStore();
 
-    // Rate limit auth routes
-    if (pathname.startsWith('/api/auth')) {
+    // Rate limit auth routes (only init, not callback)
+    if (pathname.startsWith('/api/auth') && !pathname.includes('/callback')) {
         const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
             || request.headers.get('x-real-ip')
             || 'unknown';
