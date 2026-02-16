@@ -10,7 +10,6 @@ export async function GET(request: NextRequest) {
     const state = request.nextUrl.searchParams.get('state');
     const error = request.nextUrl.searchParams.get('error');
 
-    // Handle OAuth errors
     if (error) {
         console.error('PESU OAuth error:', error);
         return NextResponse.redirect(new URL(`/?error=${error}`, request.url));
@@ -28,24 +27,22 @@ export async function GET(request: NextRequest) {
         return NextResponse.redirect(new URL('/?error=session_expired', request.url));
     }
 
-    // Validate state (CSRF protection)
     if (!storedState || state !== storedState) {
         return NextResponse.redirect(new URL('/?error=state_mismatch', request.url));
     }
 
-    // Extract returnUrl from state
+    // Extract returnUrl from state (delimiter is now | not _)
     let returnUrl = '/domains';
-    const stateParts = state.split('_');
-    if (stateParts.length > 1) {
+    const pipeIdx = state.indexOf('|');
+    if (pipeIdx !== -1) {
         try {
-            returnUrl = Buffer.from(stateParts[stateParts.length - 1], 'base64').toString('utf-8');
+            returnUrl = Buffer.from(state.slice(pipeIdx + 1), 'base64').toString('utf-8');
         } catch {
             // Invalid base64, use default
         }
     }
 
     try {
-        // Exchange code for token
         const tokenParams: Record<string, string> = {
             grant_type: 'authorization_code',
             code,
@@ -54,7 +51,6 @@ export async function GET(request: NextRequest) {
             code_verifier: codeVerifier,
         };
 
-        // Include client_secret for confidential client
         if (process.env.PESU_OAUTH_CLIENT_SECRET) {
             tokenParams.client_secret = process.env.PESU_OAUTH_CLIENT_SECRET;
         }
@@ -73,7 +69,6 @@ export async function GET(request: NextRequest) {
 
         const tokenData = await tokenResponse.json();
 
-        // Fetch user profile
         const profileResponse = await fetch(`${PESU_OAUTH_BASE_URL}/api/v1/user`, {
             headers: { Authorization: `Bearer ${tokenData.access_token}` },
         });
@@ -90,14 +85,12 @@ export async function GET(request: NextRequest) {
         const phone = profile.phone || '';
         const year = deriveYear(srn);
 
-        // Check if SuperAdmin
         const superAdminSRNs = (process.env.SUPERADMIN_SRNS || '').split(',').map(s => s.trim());
         let role = 'student';
         if (superAdminSRNs.includes(srn)) {
             role = 'superadmin';
         }
 
-        // Upsert user in database
         const supabase = await createServiceClient();
         const { data: existingUser } = await supabase
             .from('users')
@@ -105,7 +98,6 @@ export async function GET(request: NextRequest) {
             .eq('srn', srn)
             .single();
 
-        // Preserve CO/admin roles if already set
         if (existingUser?.role && existingUser.role !== 'student') {
             role = existingUser.role;
         }
@@ -117,28 +109,31 @@ export async function GET(request: NextRequest) {
                 { onConflict: 'srn' }
             );
 
-        // Set session cookie (not httpOnly so client can read profile info)
+        // Build redirect URL based on role
         const sessionData = { srn, name, email, role };
-        cookieStore.set('at26_session', JSON.stringify(sessionData), {
+
+        let redirectPath = returnUrl;
+        if (role === 'superadmin') {
+            redirectPath = '/admin/overview';
+        } else if (role.startsWith('CO_')) {
+            redirectPath = '/co/recruitments';
+        }
+
+        // Set all cookies on the redirect response directly
+        const response = NextResponse.redirect(new URL(redirectPath, request.url));
+
+        response.cookies.set('at26_session', JSON.stringify(sessionData), {
             httpOnly: false,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'lax',
-            maxAge: 86400 * 7, // 7 days
+            maxAge: 86400 * 7,
             path: '/',
         });
 
-        // Clean up OAuth cookies
-        cookieStore.delete('pesu_code_verifier');
-        cookieStore.delete('pesu_oauth_state');
+        response.cookies.delete('pesu_code_verifier');
+        response.cookies.delete('pesu_oauth_state');
 
-        // Redirect based on role
-        if (role === 'superadmin') {
-            return NextResponse.redirect(new URL('/admin/overview', request.url));
-        } else if (role.startsWith('CO_')) {
-            return NextResponse.redirect(new URL('/co/recruitments', request.url));
-        }
-
-        return NextResponse.redirect(new URL(returnUrl, request.url));
+        return response;
     } catch (error) {
         console.error('OAuth callback error:', error);
         return NextResponse.redirect(new URL('/?error=callback_failed', request.url));
