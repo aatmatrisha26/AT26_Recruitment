@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server';
 
 // Simple IP-based rate limiter for middleware (edge runtime compatible)
 const ipRequests = new Map<string, { count: number; firstRequest: number }>();
-const AUTH_RATE_LIMIT = 5;        // max attempts
+const AUTH_RATE_LIMIT = 20;       // max attempts
 const AUTH_RATE_WINDOW = 60_000;  // 60 seconds
 
 function checkAuthRateLimit(ip: string): boolean {
@@ -107,9 +107,10 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
     response.headers.set('X-Frame-Options', 'DENY');
     response.headers.set('X-XSS-Protection', '1; mode=block');
     response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+    response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
     return response;
 }
 
 export const config = {
-    matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
+    matcher: ['/((?!_next/static|_next/image|api/auth|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
 };
