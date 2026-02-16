@@ -7,7 +7,7 @@ const PESU_OAUTH_BASE_URL = 'https://pesu-oauth2.vercel.app';
  * Generates a cryptographically secure random string for PKCE
  */
 function generateRandomString(length: number): string {
-    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-.~';
     const values = crypto.getRandomValues(new Uint8Array(length));
     return Array.from(values)
         .map(x => possible[x % possible.length])
@@ -42,19 +42,7 @@ export async function GET(request: NextRequest) {
 
         // Generate state for CSRF protection
         const returnUrl = request.nextUrl.searchParams.get('returnUrl') || '/domains';
-        const state = `${generateRandomString(32)}_${Buffer.from(returnUrl).toString('base64')}`;
-
-        // Store verifier + state in httpOnly cookies
-        const cookieStore = await cookies();
-        const cookieOptions = {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax' as const,
-            maxAge: 600, // 10 minutes
-            path: '/',
-        };
-        cookieStore.set('pesu_code_verifier', codeVerifier, cookieOptions);
-        cookieStore.set('pesu_oauth_state', state, cookieOptions);
+        const state = `${generateRandomString(32)}|${Buffer.from(returnUrl).toString('base64')}`;
 
         // Build authorization URL
         const authUrl = new URL(`${PESU_OAUTH_BASE_URL}/oauth2/authorize`);
@@ -66,7 +54,21 @@ export async function GET(request: NextRequest) {
         authUrl.searchParams.set('code_challenge', codeChallenge);
         authUrl.searchParams.set('code_challenge_method', 'S256');
 
-        return NextResponse.redirect(authUrl.toString());
+        // Set cookies directly on the redirect response (not via cookieStore)
+        const response = NextResponse.redirect(authUrl.toString());
+
+        const cookieOptions = {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax' as const,
+            maxAge: 600,
+            path: '/',
+        };
+
+        response.cookies.set('pesu_code_verifier', codeVerifier, cookieOptions);
+        response.cookies.set('pesu_oauth_state', state, cookieOptions);
+
+        return response;
     } catch (error) {
         console.error('PESU OAuth init error:', error);
         return NextResponse.redirect(new URL('/?error=oauth_init_failed', request.url));
